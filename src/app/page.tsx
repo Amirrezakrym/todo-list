@@ -2,14 +2,20 @@
 
 import { useState } from "react";
 import { TodoObject } from "./models/Todo";
+import { v4 as uuid } from 'uuid';
 const Home = () => {
   const [todo, setTodo] = useState<string>('');
   const [todos, setTodos] = useState<TodoObject[]>([]);
   
   const addTodo = () =>{
-    setTodos([...todos,{id:"1", value:todo, done:false}])
+    setTodos([{ id: uuid(), value: todo, done: false }, ...todos])
     setTodo("")
   }
+
+  const markTodoDone = (id: string) =>{
+   setTodos(todos.map(todo => todo.id === id ? { ...todo, done: !todo.done } : todo));
+  }
+
   return (
     <>
     <header className="bg-slate-950 p-4">
@@ -29,7 +35,16 @@ const Home = () => {
       onClick={() => addTodo()}
       >Add Todo</button>
       <ul className="mt-5">
-        <li className="text-3xl ml-5 cursor-pointer">Toooooodoooooo</li>
+        {
+          todos.map(todo => (
+            <li
+            onClick={() => markTodoDone(todo.id)}
+             className={`text-3xl ml-5 cursor-pointer ${todo.done ? 'line-through':'no-underline'}`}>
+              {todo.value}
+            </li>
+          ))
+        }
+        
       </ul>
     </main>
     </>
